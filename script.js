@@ -1,55 +1,74 @@
-document.addEventListener("DOMContentLoaded", async () => {
-  const questionText = document.getElementById("question-text");
-  const answersDiv = document.getElementById("answers");
-  const feedbackDiv = document.getElementById("feedback");
-  const avatarImg = document.getElementById("avatar");
+const questionsURL = "questions.json";
 
-  let currentQuestionIndex = 0;
-  let questions = [];
+let currentQuestion = 0;
+let correctAnswers = 0;
+let questions = [];
 
-  // Load questions
-  try {
-    const response = await fetch("questions.json");
-    questions = await response.json();
-    showQuestion();
-  } catch (error) {
-    questionText.innerText = "שגיאה בטעינת השאלות.";
-    console.error("שגיאה בטעינה:", error);
-  }
+const container = document.getElementById("question-container");
+const feedback = document.getElementById("feedback");
+const avatar = document.getElementById("avatar-image");
 
-  function showQuestion() {
-    const q = questions[currentQuestionIndex];
-    questionText.innerText = q.question;
-    answersDiv.innerHTML = "";
-    feedbackDiv.innerText = "";
-
-    Object.entries(q.answers).forEach(([key, value]) => {
-      const btn = document.createElement("button");
-      btn.innerText = `${key}. ${value}`;
-      btn.className = "answer-button";
-      btn.onclick = () => checkAnswer(key, q.correct);
-      answersDiv.appendChild(btn);
+function loadQuestions() {
+  fetch(questionsURL)
+    .then((res) => res.json())
+    .then((data) => {
+      questions = data;
+      showQuestion();
+    })
+    .catch((err) => {
+      container.innerHTML = "שגיאה בטעינת השאלות 😢";
+      console.error(err);
     });
+}
+
+function showQuestion() {
+  const q = questions[currentQuestion];
+  container.innerHTML = `
+    <h2>${q.question}</h2>
+    <ul>
+      ${q.answers
+        .map(
+          (ans, index) =>
+            `<li><button onclick="checkAnswer(${index})">${ans}</button></li>`
+        )
+        .join("")}
+    </ul>
+  `;
+}
+
+function checkAnswer(selectedIndex) {
+  const q = questions[currentQuestion];
+  const isCorrect = selectedIndex === q.correct;
+
+  if (isCorrect) {
+    correctAnswers++;
+    feedback.innerText = "מעולה! תשובה נכונה ✅";
+    avatar.src = "enigma-smile.png";
+  } else {
+    feedback.innerText = `טעות... התשובה הנכונה: ${q.answers[q.correct]} ❌`;
+    avatar.src = "enigma-sad.png";
   }
 
-  function checkAnswer(selected, correct) {
-    const isCorrect = selected === correct;
-    avatarImg.src = isCorrect ? "enigma-smile.png" : "enigma-sad.png";
-    feedbackDiv.innerText = isCorrect
-      ? "תשובה נכונה! כל הכבוד 🎉"
-      : "תשובה שגויה. נסה שוב.";
+  feedback.classList.remove("hidden");
 
-    setTimeout(() => {
-      avatarImg.src = "enigma-neutral.png";
-      if (isCorrect) {
-        currentQuestionIndex++;
-        if (currentQuestionIndex < questions.length) {
-          showQuestion();
-        } else {
-          questionText.innerText = "סיימת את כל השאלות! 🏁";
-          answersDiv.innerHTML = "";
-        }
-      }
-    }, 1500);
-  }
-});
+  setTimeout(() => {
+    currentQuestion++;
+    feedback.classList.add("hidden");
+    avatar.src = "enigma-neutral.png";
+
+    if (currentQuestion < questions.length) {
+      showQuestion();
+    } else {
+      showResults();
+    }
+  }, 2000);
+}
+
+function showResults() {
+  container.innerHTML = `
+    <h2>סיום!</h2>
+    <p>ענית נכון על ${correctAnswers} מתוך ${questions.length}</p>
+  `;
+}
+
+loadQuestions();
