@@ -1,42 +1,37 @@
-fetch("questions.json")
-  .then((response) => response.json())
-  .then((data) => {
-    const questionContainer = document.getElementById("question-container");
-    const answerContainer = document.getElementById("answer-buttons");
-    const image = document.getElementById("enigma-img");
-    let currentQuestion = 0;
+// שאלות ישירות כאן בקוד
+const questions = [
+  {
+    question: "מה המשמעות של תמרור עצור?",
+    answers: [
+      "עצור ותן זכות קדימה",
+      "יש עצור עוד 100 מ'",
+      "עצור לצורך בדיקה",
+      "אין כניסה"
+    ],
+    correct: 0,
+    category: "תמרורים"
+  },
+  {
+    question: "מה המשמעות של תמרור אין כניסה?",
+    answers: [
+      "מותר רק לאוטובוסים",
+      "מותר לפנות שמאלה",
+      "אסור להיכנס",
+      "מותר להיכנס בזהירות"
+    ],
+    correct: 2,
+    category: "תמרורים"
+  }
+];
 
-    function showQuestion() {
-      const q = data[currentQuestion];
-      questionContainer.innerText = q.question;
-      answerContainer.innerHTML = "";
-
-      q.answers.forEach((ans, index) => {
-        const btn = document.createElement("button");
-        btn.innerText = ans;
-        btn.onclick = () => checkAnswer(index === q.correct);
-        answerContainer.appendChild(btn);
-      });
-    }
-
-    function checkAnswer(correct) {
-      if (correct) {
-        image.src = "enigma-smile.png";
-        currentQuestion++;
-        if (currentQuestion < data.length) {
-          setTimeout(showQuestion, 1000);
-        } else {
-          questionContainer.innerText = "כל הכבוד! סיימת!";
-          answerContainer.innerHTML = "";
-        }
-      } else {
-        image.src = "enigma-sad.png";
-      }
-    }
-
-    showQuestion();
-  })
-  .catch((err) => {
-    console.error("שגיאה בטעינת הקובץ:", err);
-    document.getElementById("question-container").innerText = "לא ניתן לטעון שאלות 😥";
-  });
+// רנדור של שאלה לדוגמה
+document.addEventListener("DOMContentLoaded", () => {
+  const container = document.createElement("div");
+  container.innerHTML = `
+    <h2>${questions[0].question}</h2>
+    <ul>
+      ${questions[0].answers.map((a, i) => `<li>${a}</li>`).join("")}
+    </ul>
+  `;
+  document.body.appendChild(container);
+});
