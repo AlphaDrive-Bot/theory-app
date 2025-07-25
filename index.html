@@ -2,33 +2,27 @@
 <html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <title>אלפי - סוכן התאוריה שלך</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>אלפא - סוכן התאוריה שלך 🚗</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <div class="container">
+    <h1>אלפא - סוכן התאוריה שלך 🚗</h1>
+    <p>מבחן אבחון ראשוני - 5 שאלות</p>
 
-  <div class="app-container">
-    <header>
-      <h1>🚗 אלפי - סוכן התאוריה שלך</h1>
-      <p>מבחן אבחון ראשוני: 5 שאלות</p>
-    </header>
+    <div id="question-container"></div>
 
-    <div class="avatar-container">
-      <img id="avatar" src="assets/enigma-neutral.png" alt="דמות אניגמה" />
+    <div id="enigma-avatar">
+      <img id="avatar-image" src="enigma-neutral.png" alt="אניגמה" />
     </div>
 
-    <div id="question-box" class="question-box">
-      <p id="question-text">טוען שאלה...</p>
-      <div id="answers-container" class="answers"></div>
-    </div>
-
-    <div id="feedback" class="feedback"></div>
-    <button id="next-btn" style="display: none;">שאלה הבאה</button>
-
-    <footer>
-      <p>© 2025 Alpha Theory App</p>
-    </footer>
+    <div id="feedback" class="hidden"></div>
   </div>
+
+  <footer>
+    <p>Alpha Theory App © 2025</p>
+  </footer>
 
   <script src="script.js"></script>
 </body>
