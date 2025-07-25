@@ -1,74 +1,42 @@
-const questionsURL = "questions.json";
+fetch("questions.json")
+  .then((response) => response.json())
+  .then((data) => {
+    const questionContainer = document.getElementById("question-container");
+    const answerContainer = document.getElementById("answer-buttons");
+    const image = document.getElementById("enigma-img");
+    let currentQuestion = 0;
 
-let currentQuestion = 0;
-let correctAnswers = 0;
-let questions = [];
+    function showQuestion() {
+      const q = data[currentQuestion];
+      questionContainer.innerText = q.question;
+      answerContainer.innerHTML = "";
 
-const container = document.getElementById("question-container");
-const feedback = document.getElementById("feedback");
-const avatar = document.getElementById("avatar-image");
-
-function loadQuestions() {
-  fetch(questionsURL)
-    .then((res) => res.json())
-    .then((data) => {
-      questions = data;
-      showQuestion();
-    })
-    .catch((err) => {
-      container.innerHTML = "שגיאה בטעינת השאלות 😢";
-      console.error(err);
-    });
-}
-
-function showQuestion() {
-  const q = questions[currentQuestion];
-  container.innerHTML = `
-    <h2>${q.question}</h2>
-    <ul>
-      ${q.answers
-        .map(
-          (ans, index) =>
-            `<li><button onclick="checkAnswer(${index})">${ans}</button></li>`
-        )
-        .join("")}
-    </ul>
-  `;
-}
-
-function checkAnswer(selectedIndex) {
-  const q = questions[currentQuestion];
-  const isCorrect = selectedIndex === q.correct;
-
-  if (isCorrect) {
-    correctAnswers++;
-    feedback.innerText = "מעולה! תשובה נכונה ✅";
-    avatar.src = "enigma-smile.png";
-  } else {
-    feedback.innerText = `טעות... התשובה הנכונה: ${q.answers[q.correct]} ❌`;
-    avatar.src = "enigma-sad.png";
-  }
-
-  feedback.classList.remove("hidden");
-
-  setTimeout(() => {
-    currentQuestion++;
-    feedback.classList.add("hidden");
-    avatar.src = "enigma-neutral.png";
-
-    if (currentQuestion < questions.length) {
-      showQuestion();
-    } else {
-      showResults();
+      q.answers.forEach((ans, index) => {
+        const btn = document.createElement("button");
+        btn.innerText = ans;
+        btn.onclick = () => checkAnswer(index === q.correct);
+        answerContainer.appendChild(btn);
+      });
     }
-  }, 2000);
-}
 
-function showResults() {
-  container.innerHTML = `
-    <h2>סיום!</h2>
-    <p>ענית נכון על ${correctAnswers} מתוך ${questions.length}</p>
-  `;
-}
+    function checkAnswer(correct) {
+      if (correct) {
+        image.src = "enigma-smile.png";
+        currentQuestion++;
+        if (currentQuestion < data.length) {
+          setTimeout(showQuestion, 1000);
+        } else {
+          questionContainer.innerText = "כל הכבוד! סיימת!";
+          answerContainer.innerHTML = "";
+        }
+      } else {
+        image.src = "enigma-sad.png";
+      }
+    }
 
-loadQuestions();
+    showQuestion();
+  })
+  .catch((err) => {
+    console.error("שגיאה בטעינת הקובץ:", err);
+    document.getElementById("question-container").innerText = "לא ניתן לטעון שאלות 😥";
+  });
