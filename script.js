@@ -1,4 +1,4 @@
-// שאלות ישירות כאן בקוד
+// שאלות מובנות ישירות בקוד
 const questions = [
   {
     question: "מה המשמעות של תמרור עצור?",
@@ -8,8 +8,7 @@ const questions = [
       "עצור לצורך בדיקה",
       "אין כניסה"
     ],
-    correct: 0,
-    category: "תמרורים"
+    correct: 0
   },
   {
     question: "מה המשמעות של תמרור אין כניסה?",
@@ -19,19 +18,33 @@ const questions = [
       "אסור להיכנס",
       "מותר להיכנס בזהירות"
     ],
-    correct: 2,
-    category: "תמרורים"
+    correct: 2
   }
 ];
 
-// רנדור של שאלה לדוגמה
+// ברגע שהעמוד נטען
 document.addEventListener("DOMContentLoaded", () => {
-  const container = document.createElement("div");
-  container.innerHTML = `
-    <h2>${questions[0].question}</h2>
-    <ul>
-      ${questions[0].answers.map((a, i) => `<li>${a}</li>`).join("")}
-    </ul>
-  `;
-  document.body.appendChild(container);
+  const app = document.createElement("div");
+  app.style.padding = "20px";
+  app.style.fontFamily = "Arial";
+
+  const question = document.createElement("h2");
+  question.textContent = questions[0].question;
+
+  const list = document.createElement("ul");
+  questions[0].answers.forEach((answer, index) => {
+    const li = document.createElement("li");
+    li.textContent = answer;
+    li.style.cursor = "pointer";
+    li.style.margin = "10px 0";
+    li.onclick = () => {
+      li.style.fontWeight = index === questions[0].correct ? "bold" : "normal";
+      li.style.color = index === questions[0].correct ? "green" : "red";
+    };
+    list.appendChild(li);
+  });
+
+  app.appendChild(question);
+  app.appendChild(list);
+  document.body.appendChild(app);
 });
