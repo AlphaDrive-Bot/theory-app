@@ -1,50 +1,67 @@
-// שאלות מובנות ישירות בקוד
+// שאלות שמוגדרות בקוד, לא מתוך קובץ חיצוני
 const questions = [
   {
     question: "מה המשמעות של תמרור עצור?",
     answers: [
       "עצור ותן זכות קדימה",
-      "יש עצור עוד 100 מ'",
-      "עצור לצורך בדיקה",
-      "אין כניסה"
+      "יש עצור עוד 100 מטר",
+      "זהירות, כביש חלק",
+      "אזור עבודה לפניך"
     ],
     correct: 0
   },
   {
     question: "מה המשמעות של תמרור אין כניסה?",
     answers: [
-      "מותר רק לאוטובוסים",
-      "מותר לפנות שמאלה",
+      "כביש חד סטרי",
+      "כביש ללא מוצא",
       "אסור להיכנס",
-      "מותר להיכנס בזהירות"
+      "רק לרכב ציבורי"
     ],
     correct: 2
   }
 ];
 
-// ברגע שהעמוד נטען
 document.addEventListener("DOMContentLoaded", () => {
   const app = document.createElement("div");
-  app.style.padding = "20px";
   app.style.fontFamily = "Arial";
+  app.style.padding = "30px";
 
-  const question = document.createElement("h2");
-  question.textContent = questions[0].question;
+  let current = 0;
 
-  const list = document.createElement("ul");
-  questions[0].answers.forEach((answer, index) => {
-    const li = document.createElement("li");
-    li.textContent = answer;
-    li.style.cursor = "pointer";
-    li.style.margin = "10px 0";
-    li.onclick = () => {
-      li.style.fontWeight = index === questions[0].correct ? "bold" : "normal";
-      li.style.color = index === questions[0].correct ? "green" : "red";
-    };
-    list.appendChild(li);
-  });
+  function showQuestion() {
+    app.innerHTML = "";
 
-  app.appendChild(question);
-  app.appendChild(list);
-  document.body.appendChild(app);
+    const q = document.createElement("h2");
+    q.textContent = questions[current].question;
+
+    const list = document.createElement("ul");
+    questions[current].answers.forEach((answer, i) => {
+      const li = document.createElement("li");
+      li.textContent = answer;
+      li.style.cursor = "pointer";
+      li.onclick = () => {
+        if (i === questions[current].correct) {
+          li.style.color = "green";
+        } else {
+          li.style.color = "red";
+        }
+        setTimeout(() => {
+          current++;
+          if (current < questions.length) {
+            showQuestion();
+          } else {
+            app.innerHTML = "<h2>כל הכבוד! סיימת את המבחן 🎉</h2>";
+          }
+        }, 1000);
+      };
+      list.appendChild(li);
+    });
+
+    app.appendChild(q);
+    app.appendChild(list);
+    document.body.appendChild(app);
+  }
+
+  showQuestion();
 });
